@@ -23,10 +23,15 @@ const templateEnterpriseRegistry = {
   },
 };
 
+// fakePhone :: () -> String
 function fakePhone() {
-  return leite.pessoa.rg().replace('.', '').replace('-', '');
+  return leite.pessoa.rg().replace(/./g, '').replace('-', '');
 }
 
+// randomInt :: (Int A, Int B) -> (Int C) | A < C < B
+const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+// makeEnterprise :: string -> Enterprise Object
 exports.f = function makeEnterprise(addr) {
   const enterprise = cloneDeep(templateEnterpriseRegistry);
 
@@ -39,7 +44,7 @@ exports.f = function makeEnterprise(addr) {
   enterprise.json.estadoEndereco = `${leite.localizacao.estado()}`;
   enterprise.json.logradouroEndereco = `${leite.localizacao.logradouro()}`;
   enterprise.json.nomeFantasia = `${leite.pessoa.nome({ nomeDoMeioAbreviado: true })} LTDA`;
-  enterprise.json.numeroEndereco = `${Math.floor(Math.random() * 20) * 13}`;
+  enterprise.json.numeroEndereco = `${getRandomInt(0, 110)}`;
   enterprise.json.razaoSocial = `${leite.pessoa.nome({ nomeDoMeio: true })} Razão Social`;
   enterprise.json.telefone = `${fakePhone()}`;
   enterprise.json.identificacao = `${leite.empresa.cnpj()}`;

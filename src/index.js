@@ -1,7 +1,9 @@
 /* eslint-disable quote-props */
 const Multichain = require('multinodejs');
 const cp = require('child_process');
-const makeEnterprise = require('./makeEnterprise').f;
+const makeEnterprise = require('../dummy/makeEnterprise').f;
+const makeNote = require('../dummy/makeNote.js').n;
+const makeMeta = require('../dummy/makeNote.js').m;
 
 const masterPort = 8001;
 const masterPassword = 'this-is-insecure-change-it';
@@ -11,8 +13,12 @@ const streams = ['Registros', 'Sudeste', 'Resto'];
 
 let transactionCounter = 0;
 let enterprisesCounter = 3;
+let invoicesCounter = 0;
 
+// randomInt :: (Int A, Int B) -> (Int C) | A < C < B
+const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
+// exec :: String, Object ~> Promise(Object)
 function exec(command, options = { log: false, cwd: process.cwd() }) {
   if (options.log) console.log(command);
 
@@ -29,6 +35,7 @@ function exec(command, options = { log: false, cwd: process.cwd() }) {
   });
 }
 
+// extractPassword :: Object -> String
 function extractPassword(stdout) {
   let response;
   stdout.stdout.split('\n').forEach((val) => {
@@ -40,9 +47,7 @@ function extractPassword(stdout) {
   return response;
 }
 
-function makeNote(node) {
-}
-
+// transactForever :: (Node, Node) ~> transactForever(Node, Node)
 function transactForever(master, slave) {
   console.log(`Transações já realizadas: ${transactionCounter}`);
   const timer = Math.random() * 2000;
@@ -63,17 +68,28 @@ function transactForever(master, slave) {
   }, timer);
 }
 
+// printNotes :: (Node, Node) ~> printNotes(Node, Node)
 function printNotes(master, slave) {
+  console.log(`Notas já emitidas: ${invoicesCounter}`);
   const timer = Math.random() * 2500;
   setTimeout(async () => {
+    const meta = makeMeta();
+    const sIndex = getRandomInt(1, 2);
     if (timer > 150) {
-      const nf = makeNote(master);
+      const nf = makeNote(master.addr);
+      master.node.publish([streams[sIndex], meta, nf, 'offchain'])
+        .catch(err => console.log(err));
     } else {
-      const nf = makeNote(slave);
+      const nf = makeNote(slave.addr);
+      master.node.publish([streams[sIndex], meta, nf, 'offchain'])
+        .catch(err => console.log(err));
     }
+    invoicesCounter++;
+    printNotes(master, slave);
   }, timer);
 }
 
+// registerEnterprises :: (Node, Node) ~> registerEnterprises(Node, Node)
 function registerEnterprises(master, slave) {
   console.log(`Empresas já registradas: ${enterprisesCounter}`);
   const timer = Math.random() * 5000;
@@ -130,5 +146,5 @@ function registerEnterprises(master, slave) {
 
   transactForever(master, slave);
   registerEnterprises(master, slave);
-  //printNotes(master, slave);
+  printNotes(master, slave);
 })();
