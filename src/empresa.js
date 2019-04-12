@@ -1,17 +1,22 @@
 import fake from '../utils/fields';
 
-async function getAddress(node) {
-  node.getNewAddress().then(addr => addr).catch((err) => {
+async function getAddress() {
+  this.node.getNewAddress().then((addr) => {
+    this.json.enderecoBlockchain = addr;
+  }).catch((err) => {
     throw new Error(err);
   });
 }
 
 class Enterprise {
   constructor(node) {
+    this.node = node;
+    this.registered = false;
+
     this.json = {};
 
     this.json.enderecoBlockchain = undefined;
-    this.recordAddress(node);
+    this.recordAddress();
 
     this.json.razaoSocial = fake.empresa.razaoSocial();
     this.json.nomeFantasia = fake.empresa.nomeFantasia();
@@ -28,13 +33,20 @@ class Enterprise {
     this.json.telefone = fake.telefone();
   }
 
-  async recordAddress(node) {
-    this.json.enderecoBlockchain = getAddress(node);
+  async recordAddress() {
+    try {
+      await getAddress.bind(this)();
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
-
-  register() {
-    this.console.log('oi');
+  register(stream) {
+    this.node.publish(stream, `${this.json.identificacao}`, { json: this.json })
+      .then(() => {
+        this.registered = true;
+      })
+      .catch(err => console.log(err));
   }
 
   emit() {
