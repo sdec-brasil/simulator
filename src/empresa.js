@@ -1,22 +1,16 @@
-import fake from '../utils/fields';
-
-async function getAddress() {
-  this.node.getNewAddress().then((addr) => {
-    this.json.enderecoBlockchain = addr;
-  }).catch((err) => {
-    throw new Error(err);
-  });
-}
+const fake = require('../utils/fields');
+const Note = require('../utils/note');
 
 class Enterprise {
-  constructor(node) {
+  constructor({ node, addr }, stream) {
     this.node = node;
+    this.nodeAddr = addr;
     this.registered = false;
 
     this.json = {};
 
     this.json.enderecoBlockchain = undefined;
-    this.recordAddress();
+    this.register(stream);
 
     this.json.razaoSocial = fake.empresa.razaoSocial();
     this.json.nomeFantasia = fake.empresa.nomeFantasia();
@@ -33,25 +27,47 @@ class Enterprise {
     this.json.telefone = fake.telefone();
   }
 
-  async recordAddress() {
-    try {
-      await getAddress.bind(this)();
-    } catch (err) {
-      throw new Error(err);
-    }
-  }
-
   register(stream) {
-    this.node.publish(stream, `${this.json.identificacao}`, { json: this.json })
-      .then(() => {
-        this.registered = true;
+    this.node.getNewAddress()
+      .then((addr) => {
+        this.json.enderecoBlockchain = addr;
+        return addr;
+      }).then((addr) => {
+        this.node.publish([stream, [this.json.identificacao, addr], { json: this.json }])
+          .then(() => {
+            this.registered = true;
+            console.log('Empresa registrada');
+          }).catch(err => console.log(err));
       })
-      .catch(err => console.log(err));
+      .catch((err) => {
+        throw new Error(err);
+      });
   }
 
-  emit() {
-    this.console.log('oi');
+  fund() {
+    console.log('\t Reabastecendo Empresa');
+    this.node.send([this.json.enderecoBlockchain, 0.1])
+      .catch((err) => {
+        console.log(`\t Não foi possível reabastecer: ${err}`);
+      });
+  }
+
+  publishNote(stream) {
+    const addr = this.json.enderecoBlockchain;
+    const note = new Note(this.json.enderecoBlockchain);
+
+    console.log('\t Registrando Nota');
+    this.node.publishFrom([addr, stream, note.meta, note.note, 'offchain'])
+      .then(() => console.log('\t Nota registrada')).catch((err) => {
+        if (err.code === -716 || err.code === -6) {
+          console.log('\t Nota não emitida por falta de fundos, recargando carteira...');
+          this.fund();
+        } else {
+          console.log(err);
+          throw new Error('#publishNote Err');
+        }
+      });
   }
 }
 
-export default Enterprise;
+module.exports = Enterprise;

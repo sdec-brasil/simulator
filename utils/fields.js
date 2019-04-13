@@ -1,15 +1,17 @@
-const leite = require('leite');
+const Leite = require('leite');
 const bip39 = require('bip39');
 
+const leite = new Leite();
+
 const utils = {
-  randomReais: () => (Math.random() * 10000).toFixed(2),
+  randomReais: (min = 10, max = 500) => ((Math.random() * (max - min + 1)) + min).toFixed(2),
   getRandomInt: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
   telefone: () => leite.pessoa.rg().replace(/./g, '').replace('-', ''),
   email: () => `${leite.pessoa.email()}`,
   randomDate: () => leite.pessoa.nascimento({ formato: 'YYYYMMDD' }),
-  randomItem: () => `${this.getRandomInt(1, 99)}.${this.getRandomInt(1, 99)}`,
+  randomItem: () => `${utils.getRandomInt(1, 99)}.${utils.getRandomInt(1, 99)}`,
   randomDiscriminacao: () => bip39.generateMnemonic(),
-  randomMunicipio: () => `${this.getRandomInt(1000000, 9999999)}`,
+  randomMunicipio: () => `${utils.getRandomInt(1000000, 9999999)}`,
   randomCNAE: () => `${leite.empresa.cnpj()}`,
   randomNBS: () => `${leite.pessoa.rg().replace(/./g, '').replace('-', '')}`,
   randomProcesso: () => `${leite.empresa.cnpj()}`,
@@ -21,7 +23,7 @@ const utils = {
 
 const empresa = {
   razaoSocial: () => `${leite.pessoa.nome({ nomeDoMeio: true })} Razão Social`,
-  nomeFantasia: () => `${leite.pessoa.nome({ nomeDoMeioAbreviado: true })} LTDA`,
+  nomeFantasia: () => 'Apenas um Nome Fantasia LTDA',
   identificacao: () => `${leite.empresa.cnpj()}`,
 };
 
@@ -35,36 +37,38 @@ const localizacao = {
   numero: () => `${utils.getRandomInt(0, 450)}`,
 };
 
-export default {
-  logradouro: () => localizacao.logradouro,
-  bairro: () => localizacao.bairro,
-  cep: () => localizacao.cep,
-  cidade: () => localizacao.cidade,
-  complemento: () => localizacao.complemento,
-  numero: () => localizacao.numero,
-  estado: () => localizacao.estado,
+const fields = {
+  logradouro: localizacao.logradouro,
+  bairro: localizacao.bairro,
+  cep: localizacao.cep,
+  cidade: localizacao.cidade,
+  complemento: localizacao.complemento,
+  numero: localizacao.numero,
+  estado: localizacao.estado,
 
-  email: () => utils.email,
-  telefone: () => utils.telefone,
+  email: utils.email,
+  telefone: utils.telefone,
 
   utils: {
-    reais: () => utils.randomReais,
-    date: () => utils.randomDate,
-    item: () => utils.randomItem,
-    discriminacao: () => utils.randomDiscriminacao,
-    codMunicipio: () => utils.randomMunicipio,
-    cnae: () => utils.randomCNAE,
-    nbs: () => utils.randomNBS,
-    numeroProcesso: () => utils.randomProcesso,
-    hex: () => utils.randomHex,
-    rad: (a, b) => utils.getRandomInt(a, b),
-    obra: () => utils.obra,
-    art: () => utils.art,
+    reais: utils.randomReais,
+    date: utils.randomDate,
+    item: utils.randomItem,
+    discriminacao: utils.randomDiscriminacao,
+    codMunicipio: utils.randomMunicipio,
+    cnae: utils.randomCNAE,
+    nbs: utils.randomNBS,
+    numeroProcesso: utils.randomProcesso,
+    hex: utils.randomHex,
+    rad: utils.getRandomInt,
+    obra: utils.obra,
+    art: utils.art,
   },
 
   empresa: {
-    razaoSocial: () => empresa.razaoSocial,
-    nomeFantasia: () => empresa.nomeFantasia,
-    identificacao: () => empresa.identificacao,
+    razaoSocial: empresa.razaoSocial,
+    nomeFantasia: empresa.nomeFantasia,
+    identificacao: empresa.identificacao,
   },
 };
+
+module.exports = fields;
