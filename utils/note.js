@@ -81,8 +81,8 @@ class Nota {
     }
 
     if (this.note.json.prestacaoServico.responsavelRetencao === 2) {
-      this.note.json.intermediarioServico = {
-        identificacao: fake.empresa.identificacao(),
+      this.note.json.intermediario = {
+        id: fake.empresa.identificacao(),
         nomeRazao: fake.empresa.razaoSocial(),
         cidade: fake.cidade(),
       };
