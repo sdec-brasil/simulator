@@ -9,38 +9,38 @@ class Enterprise {
 
     this.json = {};
 
-    this.json.enderecoBlockchain = undefined;
-    this.register(stream);
+    this.json.endBlock = undefined;
+    // this.register(stream);
 
-    this.json.razaoSocial = fake.empresa.razaoSocial();
-    this.json.nomeFantasia = fake.empresa.nomeFantasia();
+    this.json.razao = fake.empresa.razaoSocial();
+    this.json.fantasia = fake.empresa.nomeFantasia();
     this.json.tipoId = fake.utils.rad(1, 2);
 
     if (this.json.tipoId === 1) {
-      this.json.identificacao = fake.pessoa.identificacao();
+      this.json.id = fake.pessoa.identificacao();
     } else {
-      this.json.identificacao = fake.empresa.identificacao();
+      this.json.id = fake.empresa.identificacao();
     }
 
-    this.json.logradouroEndereco = fake.logradouro();
-    this.json.numeroEndereco = fake.numero();
-    this.json.complementoEndereco = fake.complemento();
-    this.json.bairroEndereco = fake.bairro();
-    this.json.cidadeEndereco = fake.cidade();
-    this.json.estadoEndereco = fake.estado();
-    this.json.paisEndereco = '';
-    this.json.cepEndereco = fake.cep();
+    this.json.logEnd = fake.logradouro();
+    this.json.numEnd = fake.numero();
+    this.json.compEnd = fake.complemento();
+    this.json.bairroEnd = fake.bairro();
+    this.json.cidadeEnd = fake.cidade();
+    this.json.estadoEnd = fake.estado();
+    this.json.paisEnd = '';
+    this.json.cepEnd = fake.cep();
     this.json.email = fake.email();
-    this.json.telefone = fake.telefone();
+    this.json.tel = fake.telefone();
   }
 
   register(stream) {
     this.node.getNewAddress()
       .then((addr) => {
-        this.json.enderecoBlockchain = addr;
+        this.json.endBlock = addr;
         return addr;
       }).then((addr) => {
-        this.node.publish([stream, [this.json.identificacao, addr], { json: this.json }])
+        this.node.publish([stream, [this.json.id, addr], { json: this.json }])
           .then(() => {
             this.registered = true;
             console.log('Empresa registrada');
@@ -53,15 +53,15 @@ class Enterprise {
 
   fund() {
     console.log('\t Reabastecendo Empresa');
-    this.node.send([this.json.enderecoBlockchain, 0.1])
+    this.node.send([this.json.endBlock, 0.1])
       .catch((err) => {
         console.log(`\t Não foi possível reabastecer: ${err}`);
       });
   }
 
   publishNote(stream) {
-    const addr = this.json.enderecoBlockchain;
-    const note = new Note(this.json.enderecoBlockchain);
+    const addr = this.json.endBlock;
+    const note = new Note(this.json.endBlock);
 
     console.log('\t Registrando Nota');
     this.node.publishFrom([addr, stream, note.meta, note.note, 'offchain'])
