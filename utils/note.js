@@ -34,8 +34,8 @@ class Nota {
   constructor(addr) {
     this.meta = [
       fake.utils.codMunicipio(), fake.utils.reais(),
-      fake.utils.reais(), fake.utils.reais(),
-      fake.utils.reais(), fake.utils.hex(),
+      fake.utils.reais(), fake.utils.item(),
+      fake.utils.fake.utils.rad(1, 6), fake.utils.reais(),
     ];
 
     this.note = {
