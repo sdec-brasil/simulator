@@ -32,12 +32,6 @@ const maybeF = (f, p = 0.5) => {
 
 class Nota {
   constructor(addr) {
-    this.meta = [
-      fake.utils.codMunicipio(), fake.utils.reais(),
-      fake.utils.reais(), fake.utils.item(),
-      fake.utils.fake.utils.rad(1, 6), fake.utils.reais(),
-    ];
-
     this.note = {
       json: {
         emissor: addr,
@@ -76,17 +70,42 @@ class Nota {
       },
     };
 
-    if (this.note.json.prestacaoServico.issRetido === 1) {
-      this.note.json.prestacaoServico.responsavelRetencao = fake.utils.rad(1, 2);
+    let prest = this.note.json.prestacao;
+
+    if (prest.issRetido === 1) {
+      prest.responsavelRetencao = fake.utils.rad(1, 2);
     }
 
-    if (this.note.json.prestacaoServico.responsavelRetencao === 2) {
+    if (prest.responsavelRetencao === 2) {
       this.note.json.intermediario = {
         id: fake.empresa.identificacao(),
         nomeRazao: fake.empresa.razaoSocial(),
         cidade: fake.cidade(),
       };
     }
+
+    prest.baseCalculo = baseCalculo();
+    prest.valLiquiNfse = valLiquiNfse();
+    prest
+
+    this.meta = [
+      prest.codTributMunicipio,
+      prest.valServicos,
+      prest.baseCalculo,
+      prest.itemLista,
+      prest.exigibilidadeISS,
+      prest.valIss
+    ];
+  }
+
+  baseCalculo () {
+    let prest = this.note.json.prestacao;
+    return (prest.valServicos - prest.valDeducoes - prest.descontoIncond);
+  }
+
+  valLiquiNfse () {
+    let prest = this.note.json.prestacao;
+    return (prest.valServicos - prest.valPis - prest.valCofins - prest.valInss - prest.valIr - prest.valCsll - prest.outrasRetencoes - prest.issRetido - prest.descontoIncond - prest.descontoIncond)
   }
 }
 
