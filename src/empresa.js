@@ -14,7 +14,14 @@ class Enterprise {
 
     this.json.razaoSocial = fake.empresa.razaoSocial();
     this.json.nomeFantasia = fake.empresa.nomeFantasia();
-    this.json.identificacao = fake.empresa.identificacao();
+    this.json.tipoId = fake.utils.rad(1, 2);
+
+    if (this.json.tipoId === 1) {
+      this.json.identificacao = fake.pessoa.identificacao();
+    } else {
+      this.json.identificacao = fake.empresa.identificacao();
+    }
+
     this.json.logradouroEndereco = fake.logradouro();
     this.json.numeroEndereco = fake.numero();
     this.json.complementoEndereco = fake.complemento();

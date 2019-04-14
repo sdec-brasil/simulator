@@ -37,6 +37,10 @@ const localizacao = {
   numero: () => `${utils.getRandomInt(0, 450)}`,
 };
 
+const pessoa = {
+  identificacao: `${leite.pessoa.cpf()}`,
+};
+
 const fields = {
   logradouro: localizacao.logradouro,
   bairro: localizacao.bairro,
@@ -68,6 +72,10 @@ const fields = {
     razaoSocial: empresa.razaoSocial,
     nomeFantasia: empresa.nomeFantasia,
     identificacao: empresa.identificacao,
+  },
+
+  pessoa: {
+    identificacao: pessoa.identificacao,
   },
 };
 
