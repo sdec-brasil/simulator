@@ -43,6 +43,10 @@ class Nota {
         emissor: addr,
         prestacao: {
           competencia: fake.utils.date(),
+          baseCalculo: fake.utils.reais(),
+          aliqServicos: fake.utils.reais(),
+          valIss: fake.utils.reais(),
+          valLiquiNfse: fake.utils.reais(),
           valServicos: fake.utils.reais(),
           valDeducoes: fake.utils.reais(),
           issRetido: fake.utils.rad(1, 2),
