@@ -49,7 +49,7 @@ class Nota {
           issRetido: fake.utils.rad(1, 2),
           itemLista: fake.utils.item(),
           discriminacao: fake.utils.discriminacao(),
-          codTributMunicipio: fake.utils.codMunicipio(),
+          codTributMunicipio: this.municipio(),
           exigibilidadeISS: fake.utils.rad(1, 6),
           simplesNacional: fake.utils.rad(1, 2),
           incentivoFiscal: fake.utils.rad(1, 2),
@@ -104,6 +104,20 @@ class Nota {
       prest.exigibilidadeISS,
       prest.valIss,
     ];
+  }
+
+  municipio() {
+    // Just to fix 4 cities to test it properly 
+    const rad = Math.random();
+    if (rad > 0.75) {
+      return String(8539612)
+    } else if (rad > 0.5) {
+      return String(6593759)
+    } else if (rad > 0.25) {
+      return String(1537967)
+    } else {
+      return String(2597738)
+    }
   }
 
   valIss() {
