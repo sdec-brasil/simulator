@@ -98,7 +98,7 @@ class Nota {
     prest.valLiquiNfse = this.valLiquiNfse();
 
     this.meta = [
-      prest.codTributMunicipio,
+      prest.codMunicipioIncidencia,
       prest.valServicos,
       prest.baseCalculo,
       prest.itemLista,
