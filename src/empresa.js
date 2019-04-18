@@ -26,7 +26,7 @@ class Enterprise {
     this.json.numEnd = fake.numero();
     this.json.compEnd = fake.complemento();
     this.json.bairroEnd = fake.bairro();
-    this.json.cidadeEnd = fake.cidade();
+    this.json.cidadeEnd = fake.utils.codMunicipio();
     this.json.estadoEnd = fake.estado();
     this.json.paisEnd = '';
     this.json.cepEnd = fake.cep();
