@@ -70,7 +70,7 @@ function registerEnterprises(master, slave) {
 }
 
 (async () => {
-  let slavePassword = await dockers.exec('docker exec docker-multichain_slavenode_1 cat root/.multichain/MyChain/multichain.conf');
+  let slavePassword = await dockers.exec('docker exec dockermultichain_slavenode_1 cat root/.multichain/MyChain/multichain.conf');
   slavePassword = dockers.extractPassword(slavePassword);
 
   const slave = {

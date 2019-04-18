@@ -10,7 +10,7 @@ class Enterprise {
     this.json = {};
 
     this.json.endBlock = undefined;
-    // this.register(stream);
+    this.register(stream);
 
     this.json.razao = fake.empresa.razaoSocial();
     this.json.fantasia = fake.empresa.nomeFantasia();
