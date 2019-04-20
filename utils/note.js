@@ -30,7 +30,7 @@ const maybeF = (f, o = { p: 0.5 }) => {
     }
     return f();
   }
-  return '';
+  return undefined;
 };
 
 class Nota {
@@ -112,7 +112,7 @@ class Nota {
     const rad = Math.random();
     if (rad > 0.75) {
       return String(8539612)
-    } else if (rad > 0.5) {
+    } if (rad > 0.5) {
       return String(6593759)
     } else if (rad > 0.25) {
       return String(1537967)
