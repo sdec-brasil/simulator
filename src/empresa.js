@@ -1,6 +1,13 @@
 const fake = require('../utils/fields');
 const Note = require('../utils/note');
 
+const maybeF = (f) => {
+  if (Math.random() > 0.5) {
+    return f();
+  }
+  return undefined;
+};
+
 class Enterprise {
   constructor({ node, addr }, stream) {
     this.node = node;
@@ -30,8 +37,8 @@ class Enterprise {
     this.json.estadoEnd = fake.estado();
     this.json.paisEnd = '';
     this.json.cepEnd = fake.cep();
-    this.json.email = fake.email();
-    this.json.tel = fake.telefone();
+    this.json.email = maybeF(fake.email);
+    this.json.tel = maybeF(fake.telefone);
   }
 
   register(stream) {
