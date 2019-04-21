@@ -1,19 +1,19 @@
 const fake = require('./fields');
 
 const tomador = () => ({
-  id: '',
-  nif: '',
-  nomeRazao: '',
-  logEnd: '',
-  numEnd: '',
-  compEnd: '',
-  bairroEnd: '',
-  cidadeEnd: '',
-  estadoEnd: '',
-  paisEnd: '',
-  cepEnd: '',
-  email: '',
-  tel: '',
+  id: undefined,
+  nif: undefined,
+  nomeRazao: undefined,
+  logEnd: undefined,
+  numEnd: undefined,
+  compEnd: undefined,
+  bairroEnd: undefined,
+  cidadeEnd: undefined,
+  estadoEnd: undefined,
+  paisEnd: undefined,
+  cepEnd: undefined,
+  email: undefined,
+  tel: undefined,
 });
 
 const obra = () => ({
@@ -30,7 +30,7 @@ const maybeF = (f, o = { p: 0.5 }) => {
     }
     return f();
   }
-  return '';
+  return undefined;
 };
 
 class Nota {
@@ -54,7 +54,7 @@ class Nota {
           exigibilidadeISS: fake.utils.rad(1, 6),
           simplesNacional: fake.utils.rad(1, 2),
           incentivoFiscal: fake.utils.rad(1, 2),
-          respRetencao: '',
+          respRetencao: undefined,
           valPis: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 6 }),
           valCofins: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 3 }),
           valInss: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 5 }),
@@ -66,8 +66,8 @@ class Nota {
           descontoCond: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 5 }),
           codCnae: maybeF(fake.utils.cnae),
           codNBS: maybeF(fake.utils.nbs),
-          numProcesso: '',
-          regimeEspTribut: `${odds() ? fake.utils.rad(1, 6) : ''}`,
+          numProcesso: undefined,
+          regimeEspTribut: `${odds() ? fake.utils.rad(1, 6) : undefined}`,
         },
         tomador: maybeF(tomador),
         constCivil: maybeF(obra, 0.95),
@@ -112,13 +112,13 @@ class Nota {
     const rad = Math.random();
     if (rad > 0.75) {
       return String(8539612)
-    } else if (rad > 0.5) {
+    } if (rad > 0.5) {
       return String(6593759)
-    } else if (rad > 0.25) {
+    } if (rad > 0.25) {
       return String(1537967)
-    } else {
+    } 
       return String(2597738)
-    }
+    
   }
 
   valIss() {
