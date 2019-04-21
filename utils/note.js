@@ -102,7 +102,7 @@ class Nota {
       prest.valServicos,
       prest.baseCalculo,
       prest.itemLista,
-      prest.exigibilidadeISS,
+      String(prest.exigibilidadeISS),
       prest.valIss,
     ];
   }
