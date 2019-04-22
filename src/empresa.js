@@ -71,6 +71,9 @@ class Enterprise {
     const note = new Note(this.json.endBlock);
 
     console.log('\t Registrando Nota');
+    if (isNaN(note.note.json.prestacao.valLiquiNfse)) {
+      console.log(note.note.json.prestacao);
+    }
     this.node.publishFrom([addr, stream, note.meta, note.note, 'offchain'])
       .then(() => console.log('\t Nota registrada')).catch((err) => {
         if (err.code === -716 || err.code === -6) {

@@ -132,16 +132,16 @@ class Nota {
 
   valLiquiNfse() {
     const prest = this.note.json.prestacao;
-    const valServ = Number(prest.valServicos);
-    const valPis = Number(prest.valPis);
-    const valCofins = Number(prest.valCofins);
-    const valInss = Number(prest.valInss);
-    const valIr = Number(prest.valIr);
-    const valCsll = Number(prest.valCsll);
-    const outrasRetencoes = Number(prest.outrasRetencoes);
-    const issRetido = Number(prest.issRetido);
-    const descontoCond = Number(prest.descontoCond);
-    const descontoIncond = Number(prest.descontoIncond);
+    const valServ = (prest.valServ !== undefined) ? Number(prest.valServicos) : 0;
+    const valPis = (prest.valPis !== undefined) ? Number(prest.valPis) : 0;
+    const valCofins = (prest.valCofins !== undefined) ? Number(prest.valCofins) : 0;
+    const valInss = (prest.valInss !== undefined) ? Number(prest.valInss) : 0;
+    const valIr = (prest.valIr !== undefined) ? Number(prest.valIr) : 0;
+    const valCsll = (prest.valCsll !== undefined) ? Number(prest.valCsll) : 0;
+    const outrasRetencoes = (prest.outrasRetencoes !== undefined) ? Number(prest.outrasRetencoes) : 0;
+    const issRetido = (prest.issRetido !== undefined) ? Number(prest.issRetido) : 0;
+    const descontoCond = (prest.descontoCond !== undefined) ? Number(prest.descontoCond) : 0;
+    const descontoIncond = (prest.descontoIncond !== undefined) ? Number(prest.descontoIncond) : 0;
     return `${(valServ - valPis - valCofins - valInss - valIr - valCsll - outrasRetencoes - issRetido - descontoCond - descontoIncond).toFixed(2)}`;
   }
 }
