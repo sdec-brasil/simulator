@@ -76,17 +76,21 @@ class Nota {
 
     const prest = this.note.json.prestacao;
 
+    if (prest.regimeEspTribut !== undefined) {
+      prest.regimeEspTribut = String(prest.regimeEspTribut);
+    }
+
     prest.valIss = this.valIss();
 
-    if (prest.exigibilidadeISS === 6 || prest.exigibilidadeISS === 7) {
+    if (prest.exigibilidadeISS === '6' || prest.exigibilidadeISS === '7') {
       prest.numProcesso = fake.utils.numeroProcesso();
     }
 
-    if (prest.issRetido === 1) {
-      prest.responsavelRetencao = fake.utils.rad(1, 2);
+    if (prest.issRetido === '1') {
+      prest.responsavelRetencao = String(fake.utils.rad(1, 2));
     }
 
-    if (prest.responsavelRetencao === 2) {
+    if (prest.responsavelRetencao === '2') {
       this.note.json.intermediario = {
         id: fake.empresa.identificacao(),
         nomeRazao: fake.empresa.razaoSocial(),

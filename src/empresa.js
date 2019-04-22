@@ -1,3 +1,4 @@
+const fs = require('fs');
 const fake = require('../utils/fields');
 const Note = require('../utils/note');
 
@@ -66,13 +67,18 @@ class Enterprise {
       });
   }
 
-  publishNote(stream) {
+  publishNote(folder, stream) {
     const addr = this.json.endBlock;
     const note = new Note(this.json.endBlock);
 
     console.log('\t Registrando Nota');
     this.node.publishFrom([addr, stream, note.meta, note.note, 'offchain'])
-      .then(txid => console.log(`\t Nota registrada | txid: ${txid}`)).catch((err) => {
+      .then((txid) => {
+        const json = JSON.stringify(note);
+        fs.writeFile(`${folder}/${txid}.json`, json, 'utf8', () => {
+          console.log(`\t Nota registrada | txid: ${txid}`);
+        });
+      }).catch((err) => {
         if (err.code === -716 || err.code === -6) {
           console.log('\t Nota não emitida por falta de fundos, recargando carteira...');
           this.fund();

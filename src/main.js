@@ -1,5 +1,6 @@
 /* eslint-disable quote-props */
 const Multichain = require('multinodejs');
+const fs = require('fs');
 const dockers = require('../utils/docker');
 const Enterprise = require('./empresa');
 
@@ -9,6 +10,9 @@ const slavePort = 8002;
 
 const streams = ['Registros', 'Sudeste', 'Norte', 'Nordeste', 'Sul'];
 const enterprises = [];
+
+const folder = `./notes/${Math.floor(new Date() / 1000)}`;
+fs.mkdirSync(folder);
 
 let transactionCounter = 0;
 let enterprisesCounter = 0;
@@ -46,7 +50,7 @@ function printNotes(master, slave) {
       console.log('Emitindo nota..');
       const sIndex = getRandomInt(1, 4);
       const eIndex = getRandomInt(0, length - 1);
-      enterprises[eIndex].publishNote(streams[sIndex]);
+      enterprises[eIndex].publishNote(folder, streams[sIndex]);
     }
     printNotes(master, slave);
   }, timer);
@@ -70,7 +74,7 @@ function registerEnterprises(master, slave) {
 }
 
 (async () => {
-  let slavePassword = await dockers.exec('docker exec dockermultichain_slavenode_1 cat root/.multichain/MyChain/multichain.conf');
+  let slavePassword = await dockers.exec('docker exec docker-multichain_slavenode_1 cat root/.multichain/MyChain/multichain.conf');
   slavePassword = dockers.extractPassword(slavePassword);
 
   const slave = {
