@@ -67,7 +67,7 @@ class Nota {
           codCnae: maybeF(fake.utils.cnae),
           codNBS: maybeF(fake.utils.nbs),
           numProcesso: undefined,
-          regimeEspTribut: `${odds() ? fake.utils.rad(1, 6) : undefined}`,
+          regimeEspTribut: maybeF(fake.utils.rad, { p: 0.5, min: 1, max: 6 }),
         },
         tomador: maybeF(tomador),
         constCivil: maybeF(obra, 0.95),
