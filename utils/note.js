@@ -142,7 +142,7 @@ class Nota {
     const valIr = (prest.valIr !== undefined) ? Number(prest.valIr) : 0;
     const valCsll = (prest.valCsll !== undefined) ? Number(prest.valCsll) : 0;
     const outrasRetencoes = (prest.outrasRetencoes !== undefined) ? Number(prest.outrasRetencoes) : 0;
-    const issRetido = (prest.issRetido !== undefined) ? Number(prest.issRetido) : 0;
+    const issRetido = (prest.issRetido !== 1) ? Number(prest.valIss) : 0;
     const descontoCond = (prest.descontoCond !== undefined) ? Number(prest.descontoCond) : 0;
     const descontoIncond = (prest.descontoIncond !== undefined) ? Number(prest.descontoIncond) : 0;
     return `${(valServ - valPis - valCofins - valInss - valIr - valCsll - outrasRetencoes - issRetido - descontoCond - descontoIncond).toFixed(2)}`;
