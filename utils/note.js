@@ -46,14 +46,14 @@ class Nota {
           valLiquiNfse: fake.utils.reais(),
           valServicos: fake.utils.reais(100, 450),
           valDeducoes: fake.utils.reais(0, 10),
-          issRetido: fake.utils.rad(1, 2),
+          issRetido: String(fake.utils.rad(1, 2)),
           itemLista: fake.utils.item(),
           discriminacao: fake.utils.discriminacao(),
           codMunicipioIncidencia: this.municipio(),
-          codServico: fake.utils.rad(32, 36),
-          exigibilidadeISS: fake.utils.rad(1, 6),
-          simplesNacional: fake.utils.rad(1, 2),
-          incentivoFiscal: fake.utils.rad(1, 2),
+          codServico: String(fake.utils.rad(21, 48)),
+          exigibilidadeISS: String(fake.utils.rad(1, 6)),
+          simplesNacional: String(fake.utils.rad(1, 2)),
+          incentivoFiscal: String(fake.utils.rad(1, 2)),
           respRetencao: undefined,
           valPis: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 6 }),
           valCofins: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 3 }),
@@ -108,17 +108,16 @@ class Nota {
   }
 
   municipio() {
-    // Just to fix 4 cities to test it properly 
+    // Just to fix 4 cities to test it properly
     const rad = Math.random();
     if (rad > 0.75) {
-      return String(8539612)
+      return String(8539612);
     } if (rad > 0.5) {
-      return String(6593759)
+      return String(6593759);
     } if (rad > 0.25) {
-      return String(1537967)
-    } 
-      return String(2597738)
-    
+      return String(1537967);
+    }
+    return String(2597738);
   }
 
   valIss() {
@@ -133,7 +132,17 @@ class Nota {
 
   valLiquiNfse() {
     const prest = this.note.json.prestacao;
-    return `${(prest.valServicos - prest.valPis - prest.valCofins - prest.valInss - prest.valIr - prest.valCsll - prest.outrasRetencoes - prest.issRetido - prest.descontoIncond - prest.descontoIncond).toFixed(2)}`;
+    const valServ = Number(prest.valServicos);
+    const valPis = Number(prest.valPis);
+    const valCofins = Number(prest.valCofins);
+    const valInss = Number(prest.valInss);
+    const valIr = Number(prest.valIr);
+    const valCsll = Number(prest.valCsll);
+    const outrasRetencoes = Number(prest.outrasRetencoes);
+    const issRetido = Number(prest.issRetido);
+    const descontoCond = Number(prest.descontoCond);
+    const descontoIncond = Number(prest.descontoIncond);
+    return `${(valServ - valPis - valCofins - valInss - valIr - valCsll - outrasRetencoes - issRetido - descontoCond - descontoIncond).toFixed(2)}`;
   }
 }
 
