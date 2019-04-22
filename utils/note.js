@@ -135,7 +135,7 @@ class Nota {
 
   valLiquiNfse() {
     const prest = this.note.json.prestacao;
-    const valServ = (prest.valServ !== undefined) ? Number(prest.valServicos) : 0;
+    const valServ = (prest.valServicos !== undefined) ? Number(prest.valServicos) : 0;
     const valPis = (prest.valPis !== undefined) ? Number(prest.valPis) : 0;
     const valCofins = (prest.valCofins !== undefined) ? Number(prest.valCofins) : 0;
     const valInss = (prest.valInss !== undefined) ? Number(prest.valInss) : 0;
