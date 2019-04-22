@@ -104,13 +104,15 @@ function registerEnterprises(master, slave) {
   streams.forEach(async (stream, i) => {
     if (i) {
       try {
-        await master.node.create(['stream', stream, { 'restrict': 'onchain' }, { 'funcao': 'Registro de Empresas' }]);
+        const tx = await master.node.create(['stream', stream, { 'restrict': 'onchain' }, { 'funcao': 'Registro de Empresas' }]);
+        console.log(`Stream ${stream} | ${tx}`);
       } catch (e) {
         console.log(e);
       }
     } else {
       try {
-        master.node.create(['stream', stream, { 'restrict': 'offchain' }, { 'key1': 'value1' }]);
+        const tx = await master.node.create(['stream', stream, { 'restrict': 'offchain' }, { 'key1': 'value1' }]);
+        console.log(`Stream ${stream} | ${tx}`);
       } catch (e) {
         console.log(e);
       }
