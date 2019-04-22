@@ -103,11 +103,17 @@ function registerEnterprises(master, slave) {
 
   streams.forEach(async (stream, i) => {
     if (i) {
-      master.node.create(['stream', stream, { 'restrict': 'onchain' }, { 'funcao': 'Registro de Empresas' }])
-        .catch(e => console.log(e));
+      try {
+        await master.node.create(['stream', stream, { 'restrict': 'onchain' }, { 'funcao': 'Registro de Empresas' }]);
+      } catch (e) {
+        console.log(e);
+      }
     } else {
-      master.node.create(['stream', stream, { 'restrict': 'offchain' }, { 'key1': 'value1' }])
-        .catch(e => console.log(e));
+      try {
+        master.node.create(['stream', stream, { 'restrict': 'offchain' }, { 'key1': 'value1' }]);
+      } catch (e) {
+        console.log(e);
+      }
     }
   });
 
