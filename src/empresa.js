@@ -71,11 +71,8 @@ class Enterprise {
     const note = new Note(this.json.endBlock);
 
     console.log('\t Registrando Nota');
-    if (isNaN(note.note.json.prestacao.valLiquiNfse)) {
-      console.log(note.note.json.prestacao);
-    }
     this.node.publishFrom([addr, stream, note.meta, note.note, 'offchain'])
-      .then(() => console.log('\t Nota registrada')).catch((err) => {
+      .then(txid => console.log(`\t Nota registrada | txid: ${txid}`)).catch((err) => {
         if (err.code === -716 || err.code === -6) {
           console.log('\t Nota não emitida por falta de fundos, recargando carteira...');
           this.fund();

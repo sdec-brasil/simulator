@@ -41,7 +41,7 @@ class Nota {
         prestacao: {
           competencia: fake.utils.date(),
           baseCalculo: fake.utils.reais(),
-          aliqServicos: fake.utils.reais(0, 0.3),
+          aliqServicos: fake.utils.reais(0, 0.3), // % of tax
           valIss: fake.utils.reais(),
           valLiquiNfse: fake.utils.reais(),
           valServicos: fake.utils.reais(100, 450),
@@ -127,7 +127,10 @@ class Nota {
 
   baseCalculo() {
     const prest = this.note.json.prestacao;
-    return `${(prest.valServicos - prest.valDeducoes - prest.descontoIncond).toFixed(2)}`;
+    const valServ = (prest.valServicos !== undefined) ? Number(prest.valServicos) : 0;
+    const valDeducoes = (prest.valDeducoes !== undefined) ? Number(prest.valDeducoes) : 0;
+    const descontoIncond = (prest.descontoIncond !== undefined) ? Number(prest.descontoIncond) : 0;
+    return `${(valServ - (valDeducoes + descontoIncond)).toFixed(2)}`;
   }
 
   valLiquiNfse() {
