@@ -87,10 +87,10 @@ class Nota {
     }
 
     if (prest.issRetido === '1') {
-      prest.responsavelRetencao = String(fake.utils.rad(1, 2));
+      prest.respRetencao = String(fake.utils.rad(1, 2));
     }
 
-    if (prest.responsavelRetencao === '2') {
+    if (prest.respRetencao === '2') {
       this.note.json.intermediario = {
         id: fake.empresa.identificacao(),
         nomeRazao: fake.empresa.razaoSocial(),
