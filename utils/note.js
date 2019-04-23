@@ -49,7 +49,7 @@ class Nota {
           issRetido: String(fake.utils.rad(1, 2)),
           itemLista: fake.utils.item(),
           discriminacao: fake.utils.discriminacao(),
-          codMunicipioIncidencia: this.municipio(),
+          codTributMunicipio: this.municipio(),
           codServico: String(fake.utils.rad(21, 48)),
           exigibilidadeISS: String(fake.utils.rad(1, 6)),
           simplesNacional: String(fake.utils.rad(1, 2)),
@@ -102,7 +102,7 @@ class Nota {
     prest.valLiquiNfse = this.valLiquiNfse();
 
     this.meta = [
-      prest.codMunicipioIncidencia,
+      prest.codTributMunicipio,
       prest.valServicos,
       prest.baseCalculo,
       prest.itemLista,
