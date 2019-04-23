@@ -71,22 +71,24 @@ class Enterprise {
     const addr = this.json.endBlock;
     const note = new Note(this.json.endBlock);
 
-    console.log('\t Registrando Nota');
-    this.node.publishFrom([addr, stream, note.meta, note.note, 'offchain'])
-      .then((txid) => {
-        const json = JSON.stringify(note);
-        fs.writeFile(`${folder}/${txid}.json`, json, 'utf8', () => {
-          console.log(`\t Nota registrada | txid: ${txid}`);
+    if (this.registered) {
+      console.log('\t Registrando Nota');
+      this.node.publishFrom([addr, stream, note.meta, note.note, 'offchain'])
+        .then((txid) => {
+          const json = JSON.stringify(note);
+          fs.writeFile(`${folder}/${txid}.json`, json, 'utf8', () => {
+            console.log(`\t Nota registrada | txid: ${txid}`);
+          });
+        }).catch((err) => {
+          if (err.code === -716 || err.code === -6) {
+            console.log('\t Nota não emitida por falta de fundos, recargando carteira...');
+            this.fund();
+          } else {
+            console.log(err);
+            throw new Error('#publishNote Err');
+          }
         });
-      }).catch((err) => {
-        if (err.code === -716 || err.code === -6) {
-          console.log('\t Nota não emitida por falta de fundos, recargando carteira...');
-          this.fund();
-        } else {
-          console.log(err);
-          throw new Error('#publishNote Err');
-        }
-      });
+    }
   }
 }
 
