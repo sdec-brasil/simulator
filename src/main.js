@@ -8,7 +8,7 @@ const masterPort = 8001;
 const masterPassword = 'this-is-insecure-change-it';
 const slavePort = 8002;
 
-const streams = ['Registros', 'RJ'];
+const streams = ['Registros', 'Campo das Vertentes'];
 const enterprises = [];
 
 const folder = `./notes/${Math.floor(new Date() / 1000)}`;
@@ -104,14 +104,14 @@ function registerEnterprises(master, slave) {
   streams.forEach(async (stream, i) => {
     if (i) {
       try {
-        const tx = await master.node.create(['stream', stream, { 'restrict': 'onchain' }, { 'funcao': 'Registro de Empresas' }]);
+        const tx = await master.node.create(['stream', stream, { 'restrict': 'onchain' }, { 'UF': 'MG' }]);
         console.log(`Stream ${stream} | ${tx}`);
       } catch (e) {
         console.log(e);
       }
     } else {
       try {
-        const tx = await master.node.create(['stream', stream, { 'restrict': 'offchain' }, { 'key1': 'value1' }]);
+        const tx = await master.node.create(['stream', stream, { 'restrict': 'offchain' }, { 'funcao': 'Registro de empresas' }]);
         console.log(`Stream ${stream} | ${tx}`);
       } catch (e) {
         console.log(e);
