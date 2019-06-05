@@ -49,7 +49,7 @@ class Nota {
           issRetido: String(fake.utils.rad(1, 2)),
           itemLista: fake.utils.item(),
           discriminacao: fake.utils.discriminacao(),
-          codTributMunicipio: this.municipio(),
+          codTributMunicipio: this.prefeitura(),
           codServico: String(fake.utils.rad(21, 48)),
           exigibilidadeISS: String(fake.utils.rad(1, 6)),
           simplesNacional: String(fake.utils.rad(1, 2)),
@@ -68,6 +68,7 @@ class Nota {
           codNBS: maybeF(fake.utils.nbs),
           numProcesso: undefined,
           regimeEspTribut: maybeF(fake.utils.rad, { p: 0.5, min: 1, max: 6 }),
+          prefeituraIncidencia: this.prefeitura(),
         },
         tomador: maybeF(tomador),
         constCivil: maybeF(obra, 0.95),
@@ -111,17 +112,8 @@ class Nota {
     ];
   }
 
-  municipio() {
-    // Just to fix 4 cities to test it properly
-    const rad = Math.random();
-    if (rad > 0.75) {
-      return String(8539612);
-    } if (rad > 0.5) {
-      return String(6593759);
-    } if (rad > 0.25) {
-      return String(1537967);
-    }
-    return String(2597738);
+  prefeitura() {
+    return String(1100379);
   }
 
   valIss() {
@@ -131,25 +123,36 @@ class Nota {
 
   baseCalculo() {
     const prest = this.note.json.prestacao;
-    const valServ = (prest.valServicos !== undefined) ? Number(prest.valServicos) : 0;
-    const valDeducoes = (prest.valDeducoes !== undefined) ? Number(prest.valDeducoes) : 0;
-    const descontoIncond = (prest.descontoIncond !== undefined) ? Number(prest.descontoIncond) : 0;
+    const valServ = prest.valServicos !== undefined ? Number(prest.valServicos) : 0;
+    const valDeducoes = prest.valDeducoes !== undefined ? Number(prest.valDeducoes) : 0;
+    const descontoIncond = prest.descontoIncond !== undefined ? Number(prest.descontoIncond) : 0;
     return `${(valServ - (valDeducoes + descontoIncond)).toFixed(2)}`;
   }
 
   valLiquiNfse() {
     const prest = this.note.json.prestacao;
-    const valServ = (prest.valServicos !== undefined) ? Number(prest.valServicos) : 0;
-    const valPis = (prest.valPis !== undefined) ? Number(prest.valPis) : 0;
-    const valCofins = (prest.valCofins !== undefined) ? Number(prest.valCofins) : 0;
-    const valInss = (prest.valInss !== undefined) ? Number(prest.valInss) : 0;
-    const valIr = (prest.valIr !== undefined) ? Number(prest.valIr) : 0;
-    const valCsll = (prest.valCsll !== undefined) ? Number(prest.valCsll) : 0;
-    const outrasRetencoes = (prest.outrasRetencoes !== undefined) ? Number(prest.outrasRetencoes) : 0;
-    const issRetido = (prest.issRetido === '1') ? Number(prest.valIss) : 0;
-    const descontoCond = (prest.descontoCond !== undefined) ? Number(prest.descontoCond) : 0;
-    const descontoIncond = (prest.descontoIncond !== undefined) ? Number(prest.descontoIncond) : 0;
-    return `${(valServ - valPis - valCofins - valInss - valIr - valCsll - outrasRetencoes - issRetido - descontoCond - descontoIncond).toFixed(2)}`;
+    const valServ = prest.valServicos !== undefined ? Number(prest.valServicos) : 0;
+    const valPis = prest.valPis !== undefined ? Number(prest.valPis) : 0;
+    const valCofins = prest.valCofins !== undefined ? Number(prest.valCofins) : 0;
+    const valInss = prest.valInss !== undefined ? Number(prest.valInss) : 0;
+    const valIr = prest.valIr !== undefined ? Number(prest.valIr) : 0;
+    const valCsll = prest.valCsll !== undefined ? Number(prest.valCsll) : 0;
+    const outrasRetencoes = prest.outrasRetencoes !== undefined ? Number(prest.outrasRetencoes) : 0;
+    const issRetido = prest.issRetido === '1' ? Number(prest.valIss) : 0;
+    const descontoCond = prest.descontoCond !== undefined ? Number(prest.descontoCond) : 0;
+    const descontoIncond = prest.descontoIncond !== undefined ? Number(prest.descontoIncond) : 0;
+    return `${(
+      valServ
+      - valPis
+      - valCofins
+      - valInss
+      - valIr
+      - valCsll
+      - outrasRetencoes
+      - issRetido
+      - descontoCond
+      - descontoIncond
+    ).toFixed(2)}`;
   }
 }
 

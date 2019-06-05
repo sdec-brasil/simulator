@@ -8,7 +8,7 @@ const masterPort = 8001;
 const masterPassword = 'this-is-insecure-change-it';
 const slavePort = 8002;
 
-const streams = ['Registros', 'Campo das Vertentes'];
+const streams = ['Registros', 'Leste Rondoniense'];
 const enterprises = [];
 
 const folder = `./notes/${Math.floor(new Date() / 1000)}`;
@@ -48,7 +48,8 @@ function printNotes(master, slave) {
     const { length } = enterprises;
     if (length) {
       console.log('Emitindo nota..');
-      const sIndex = getRandomInt(1, 4);
+      // const sIndex = getRandomInt(1, 4);
+      const sIndex = 1;
       const eIndex = getRandomInt(0, length - 1);
       enterprises[eIndex].publishNote(folder, streams[sIndex]);
     }
@@ -74,7 +75,9 @@ function registerEnterprises(master, slave) {
 }
 
 (async () => {
-  let slavePassword = await dockers.exec('docker exec dockermultichain_slavenode_1 cat root/.multichain/MyChain/multichain.conf');
+  let slavePassword = await dockers.exec(
+    'docker exec dockermultichain_slavenode_1 cat root/.multichain/MyChain/multichain.conf',
+  );
   slavePassword = dockers.extractPassword(slavePassword);
 
   const slave = {
@@ -87,7 +90,7 @@ function registerEnterprises(master, slave) {
     addr: '',
   };
 
-  slave.addr = ((await slave.node.getAddresses())['0']).toString();
+  slave.addr = (await slave.node.getAddresses())['0'].toString();
 
   const master = {
     node: Multichain({
@@ -99,19 +102,29 @@ function registerEnterprises(master, slave) {
     addr: '',
   };
 
-  master.addr = ((await master.node.getAddresses())['0']).toString();
+  master.addr = (await master.node.getAddresses())['0'].toString();
 
   streams.forEach(async (stream, i) => {
     if (i) {
       try {
-        const tx = await master.node.create(['stream', stream, { 'restrict': 'onchain' }, { 'UF': 'MG' }]);
+        const tx = await master.node.create([
+          'stream',
+          stream,
+          { restrict: 'onchain' },
+          { UF: 'RO' },
+        ]);
         console.log(`Stream ${stream} | ${tx}`);
       } catch (e) {
         console.log(e);
       }
     } else {
       try {
-        const tx = await master.node.create(['stream', stream, { 'restrict': 'offchain' }, { 'funcao': 'Registro de empresas' }]);
+        const tx = await master.node.create([
+          'stream',
+          stream,
+          { restrict: 'offchain' },
+          { funcao: 'Registro de empresas' },
+        ]);
         console.log(`Stream ${stream} | ${tx}`);
       } catch (e) {
         console.log(e);
