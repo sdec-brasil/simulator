@@ -61,7 +61,7 @@ class Nota {
           valIr: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 7 }),
           valCsll: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 3 }),
           outrasRetencoes: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 8 }),
-          valtotalTributos: maybeF(fake.utils.reais, { p: 0.5, min: 6, max: 14 }),
+          valTotalTributos: maybeF(fake.utils.reais, { p: 0.5, min: 6, max: 14 }),
           descontoIncond: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 4 }),
           descontoCond: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 5 }),
           codCnae: maybeF(fake.utils.cnae),
