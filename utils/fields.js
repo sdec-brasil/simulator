@@ -28,8 +28,10 @@ const constraint = (str, size) => {
 };
 
 const utils = {
-  randomReais: (min = 10, max = 500) => (Math.random() * (max - min) + min).toFixed(2),
+  getRandomBoolean: () => (Math.random() > 0.5),
+  getRandomDecimal: (min, max) => (Math.random() * (max - min) + min).toFixed(1),
   getRandomInt: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
+  randomReais: (min = 10, max = 500) => utils.getRandomInt(min, max),
   telefone: () => {
     const tel = leite.pessoa.rg().replace(/./g, '').replace('-', '');
     constraint(tel, sz.tel);
@@ -132,6 +134,7 @@ const fields = {
   telefone: utils.telefone,
 
   utils: {
+    boolean: utils.getRandomBoolean,
     reais: utils.randomReais,
     date: utils.randomDate,
     item: utils.randomItem,
@@ -144,6 +147,7 @@ const fields = {
     rad: utils.getRandomInt,
     obra: utils.obra,
     art: utils.art,
+    decimal: utils.getRandomDecimal,
   },
 
   empresa: {

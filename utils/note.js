@@ -1,24 +1,25 @@
 const fake = require('./fields');
+const validator = require('../../smartfilters/stream/validateNF');
 
 const tomador = () => ({
-  id: undefined,
-  nif: undefined,
-  nomeRazao: undefined,
-  logEnd: undefined,
-  numEnd: undefined,
-  compEnd: undefined,
-  bairroEnd: undefined,
-  cidadeEnd: undefined,
-  estadoEnd: undefined,
+  identificacaoTomador: fake.empresa.identificacao(),
+  nif: fake.empresa.identificacao(),
+  nomeRazaoTomador: fake.empresa.razaoSocial(),
+  logEnd: fake.logradouro(),
+  numEnd: fake.numero(),
+  compEnd: fake.complemento(),
+  bairroEnd: fake.bairro(),
+  cidadeEnd: fake.cidade(),
+  estadoEnd: fake.estado(),
   paisEnd: undefined,
-  cepEnd: undefined,
-  email: undefined,
+  cepEnd: fake.cep(),
+  email: fake.email(),
   tel: undefined,
 });
 
 const obra = () => ({
-  codObra: fake.utils.obra,
-  art: fake.utils.art,
+  codObra: fake.utils.obra(),
+  art: fake.utils.art(),
 });
 
 const odds = (p = 0.5) => Math.random() > p;
@@ -38,22 +39,23 @@ class Nota {
     this.note = {
       json: {
         emissor: addr,
+        // substitutes: balbalbabla,
         prestacao: {
+          optanteSimplesNacional: String(fake.utils.boolean()),
           competencia: fake.utils.date(),
           baseCalculo: fake.utils.reais(),
-          aliqServicos: fake.utils.reais(0, 0.3), // % of tax
+          aliqServicos: fake.utils.decimal(0, 0.3), // % of tax
           valIss: fake.utils.reais(),
           valLiquiNfse: fake.utils.reais(),
           valServicos: fake.utils.reais(100, 450),
           valDeducoes: fake.utils.reais(0, 10),
-          issRetido: String(fake.utils.rad(1, 2)),
+          issRetido: fake.utils.boolean(),
           itemLista: fake.utils.item(),
           discriminacao: fake.utils.discriminacao(),
           codTributMunicipio: this.prefeitura(),
           codServico: String(fake.utils.rad(21, 48)),
           exigibilidadeISS: String(fake.utils.rad(1, 6)),
-          simplesNacional: String(fake.utils.rad(1, 2)),
-          incentivoFiscal: String(fake.utils.rad(1, 2)),
+          incentivoFiscal: fake.utils.boolean(),
           respRetencao: undefined,
           valPis: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 6 }),
           valCofins: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 3 }),
@@ -87,15 +89,15 @@ class Nota {
       prest.numProcesso = fake.utils.numeroProcesso();
     }
 
-    if (prest.issRetido === '1') {
+    if (prest.issRetido) {
       prest.respRetencao = String(fake.utils.rad(1, 2));
     }
 
     if (prest.respRetencao === '2') {
       this.note.json.intermediario = {
-        id: fake.empresa.identificacao(),
-        nomeRazao: fake.empresa.razaoSocial(),
-        cidade: fake.cidade(),
+        identificacaoIntermed: fake.empresa.identificacao(),
+        nomeRazaoIntermed: fake.empresa.razaoSocial(),
+        cidadeIntermed: fake.cidade(),
       };
     }
 
@@ -118,29 +120,29 @@ class Nota {
 
   valIss() {
     const prest = this.note.json.prestacao;
-    return `${(Number(prest.valServicos) * Number(prest.aliqServicos)).toFixed(2)}`;
+    return `${(parseInt(prest.valServicos, 10) * parseInt(prest.aliqServicos, 10))}`;
   }
 
   baseCalculo() {
     const prest = this.note.json.prestacao;
-    const valServ = prest.valServicos !== undefined ? Number(prest.valServicos) : 0;
-    const valDeducoes = prest.valDeducoes !== undefined ? Number(prest.valDeducoes) : 0;
-    const descontoIncond = prest.descontoIncond !== undefined ? Number(prest.descontoIncond) : 0;
-    return `${(valServ - (valDeducoes + descontoIncond)).toFixed(2)}`;
+    const valServ = prest.valServicos !== undefined ? parseInt(prest.valServicos, 10) : 0;
+    const valDeducoes = prest.valDeducoes !== undefined ? parseInt(prest.valDeducoes, 10) : 0;
+    const descontoIncond = prest.descontoIncond !== undefined ? parseInt(prest.descontoIncond, 10) : 0;
+    return `${(valServ - (valDeducoes + descontoIncond))}`;
   }
 
   valLiquiNfse() {
     const prest = this.note.json.prestacao;
-    const valServ = prest.valServicos !== undefined ? Number(prest.valServicos) : 0;
-    const valPis = prest.valPis !== undefined ? Number(prest.valPis) : 0;
-    const valCofins = prest.valCofins !== undefined ? Number(prest.valCofins) : 0;
-    const valInss = prest.valInss !== undefined ? Number(prest.valInss) : 0;
-    const valIr = prest.valIr !== undefined ? Number(prest.valIr) : 0;
-    const valCsll = prest.valCsll !== undefined ? Number(prest.valCsll) : 0;
-    const outrasRetencoes = prest.outrasRetencoes !== undefined ? Number(prest.outrasRetencoes) : 0;
-    const issRetido = prest.issRetido === '1' ? Number(prest.valIss) : 0;
-    const descontoCond = prest.descontoCond !== undefined ? Number(prest.descontoCond) : 0;
-    const descontoIncond = prest.descontoIncond !== undefined ? Number(prest.descontoIncond) : 0;
+    const valServ = prest.valServicos !== undefined ? parseInt(prest.valServicos, 10) : 0;
+    const valPis = prest.valPis !== undefined ? parseInt(prest.valPis, 10) : 0;
+    const valCofins = prest.valCofins !== undefined ? parseInt(prest.valCofins, 10) : 0;
+    const valInss = prest.valInss !== undefined ? parseInt(prest.valInss, 10) : 0;
+    const valIr = prest.valIr !== undefined ? parseInt(prest.valIr, 10) : 0;
+    const valCsll = prest.valCsll !== undefined ? parseInt(prest.valCsll, 10) : 0;
+    const outrasRetencoes = prest.outrasRetencoes !== undefined ? parseInt(prest.outrasRetencoes, 10) : 0;
+    const issRetido = prest.issRetido ? parseInt(prest.valIss, 10) : 0;
+    const descontoCond = prest.descontoCond !== undefined ? parseInt(prest.descontoCond, 10) : 0;
+    const descontoIncond = prest.descontoIncond !== undefined ? parseInt(prest.descontoIncond, 10) : 0;
     return `${(
       valServ
       - valPis
@@ -157,3 +159,15 @@ class Nota {
 }
 
 module.exports = Nota;
+
+// const a = new Nota('ajsdkifowldpsodkenrmqweoiuzj');
+// console.log(a.note.json);
+// const results = validator.validateNote(a.note.json);
+// const falses = {};
+// Object.keys(results).forEach((key) => {
+//   if (results[key][1] === false) {
+//     falses[key] = [results[key][1], results[key][0]];
+//   }
+// });
+// console.log(falses);
+// console.log('pref', a.prefeitura());
