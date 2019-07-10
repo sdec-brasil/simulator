@@ -14,22 +14,11 @@ class Enterprise {
     this.node = node;
     this.nodeAddr = addr;
     this.registered = false;
-
     this.json = {};
-
     this.json.endBlock = undefined;
-    this.register(stream);
-
     this.json.razao = fake.empresa.razaoSocial();
     this.json.fantasia = fake.empresa.nomeFantasia();
-    this.json.tipoId = fake.utils.rad(1, 2);
-
-    if (this.json.tipoId === 1) {
-      this.json.id = fake.pessoa.identificacao();
-    } else {
-      this.json.id = fake.empresa.identificacao();
-    }
-
+    this.json.cnpj = fake.empresa.identificacao();
     this.json.logEnd = fake.logradouro();
     this.json.numEnd = fake.numero();
     this.json.compEnd = fake.complemento();
@@ -40,31 +29,29 @@ class Enterprise {
     this.json.cepEnd = fake.cep();
     this.json.email = maybeF(fake.email);
     this.json.tel = maybeF(fake.telefone);
+    this.register(stream);
   }
 
-  register(stream) {
-    this.node.getNewAddress()
-      .then((addr) => {
-        this.json.endBlock = addr;
-        return addr;
-      }).then((addr) => {
-        this.node.publish([stream, [this.json.id, addr], { json: this.json }])
-          .then(() => {
-            this.registered = true;
-            console.log('Empresa registrada');
-          }).catch(err => console.log(err));
-      })
-      .catch((err) => {
-        throw new Error(err);
-      });
-  }
+  async register(stream) {
+    try {
+      const address = await this.node.getNewAddress();
+      this.json.endBlock = address;
+      const tx = await this.node.grant([address, 'send,receive', 0]);
 
-  fund() {
-    console.log('\t Reabastecendo Empresa');
-    this.node.send([this.json.endBlock, 0.1])
-      .catch((err) => {
-        console.log(`\t Não foi possível reabastecer: ${err}`);
-      });
+      setTimeout(async () => {
+        try {
+          await this.node.publishFrom([address, stream, ['COMPANY_REGISTRY', this.json.cnpj], { json: this.json }]);
+          this.registered = true;
+          console.log(`Empresa ${address} Registrada com ${tx}`);
+        } catch (e) {
+          console.log('Error ao registrar empresa:');
+          console.error(e);
+        }
+      }, 30000);
+    } catch (e) {
+      console.log('Error ao gerar endereço e permitir empresa:');
+      console.error(e);
+    }
   }
 
   publishNote(folder, stream) {
@@ -72,21 +59,18 @@ class Enterprise {
     const note = new Note(this.json.endBlock);
 
     if (this.registered) {
-      console.log('\t Registrando Nota');
-      this.node.publishFrom([addr, stream, note.meta, note.note, 'offchain'])
+      console.log('Registrando Nota');
+      this.node.publishFrom([addr, stream, note.meta, note.note])
         .then((txid) => {
           const json = JSON.stringify(note);
           fs.writeFile(`${folder}/${txid}.json`, json, 'utf8', () => {
             console.log(`\t Nota registrada | txid: ${txid}`);
           });
         }).catch((err) => {
-          if (err.code === -716 || err.code === -6) {
-            console.log('\t Nota não emitida por falta de fundos, recargando carteira...');
-            this.fund();
-          } else {
-            console.log(err);
-            throw new Error('#publishNote Err');
-          }
+          console.log('\t Não conseguiu registrar nota');
+          console.log(err.code);
+          console.log(err);
+          throw new Error('#publishNote Err');
         });
     }
   }

@@ -8,38 +8,16 @@ const masterPort = 8001;
 const masterPassword = 'this-is-insecure-change-it';
 const slavePort = 8002;
 
-const streams = ['Registros', 'Leste Rondoniense'];
+const stream = 'events';
 const enterprises = [];
 
 const folder = `./notes/${Math.floor(new Date() / 1000)}`;
 fs.mkdirSync(folder);
 
-let transactionCounter = 0;
 let enterprisesCounter = 0;
 
 // randomInt :: (Int A, Int B) -> (Int C) | A < C < B
 const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-// transactForever :: (Node, Node) ~> transactForever(Node, Node)
-function transactForever(master, slave) {
-  console.log(`Transações já realizadas: ${transactionCounter}`);
-  const timer = Math.random() * 2000;
-  setTimeout(async () => {
-    const amount = timer / 20000;
-
-    if (amount > 0.05) {
-      master.node.send([slave.addr, amount]).catch((err) => {
-        console.log(err);
-      });
-    } else {
-      slave.node.send([master.addr, amount]).catch((err) => {
-        console.log(err);
-      });
-    }
-    transactionCounter += 1;
-    transactForever(master, slave);
-  }, timer);
-}
 
 // printNotes :: (Node, Node) ~> printNotes(Node, Node)
 function printNotes(master, slave) {
@@ -47,11 +25,8 @@ function printNotes(master, slave) {
   setTimeout(async () => {
     const { length } = enterprises;
     if (length) {
-      console.log('Emitindo nota..');
-      // const sIndex = getRandomInt(1, 4);
-      const sIndex = 1;
       const eIndex = getRandomInt(0, length - 1);
-      enterprises[eIndex].publishNote(folder, streams[sIndex]);
+      enterprises[eIndex].publishNote(folder, stream);
     }
     printNotes(master, slave);
   }, timer);
@@ -59,14 +34,13 @@ function printNotes(master, slave) {
 
 // registerEnterprises :: (Node, Node) ~> registerEnterprises(Node, Node)
 function registerEnterprises(master, slave) {
-  console.log(`Empresas já registradas: ${enterprisesCounter}`);
   const timer = Math.random() * 15000;
   setTimeout(async () => {
     if (timer > 7250) {
-      const enterprise = new Enterprise(master, streams[0]);
+      const enterprise = new Enterprise(master, stream);
       enterprises.push(enterprise);
     } else {
-      const enterprise = new Enterprise(slave, streams[0]);
+      const enterprise = new Enterprise(slave, stream);
       enterprises.push(enterprise);
     }
     enterprisesCounter += 1;
@@ -76,7 +50,7 @@ function registerEnterprises(master, slave) {
 
 (async () => {
   let slavePassword = await dockers.exec(
-    'docker exec dockermultichain_slavenode_1 cat root/.multichain/MyChain/multichain.conf',
+    'docker exec docker-multichain_slavenode_1 cat root/.multichain/MyChain/multichain.conf',
   );
   slavePassword = dockers.extractPassword(slavePassword);
 
@@ -104,35 +78,8 @@ function registerEnterprises(master, slave) {
 
   master.addr = (await master.node.getAddresses())['0'].toString();
 
-  streams.forEach(async (stream, i) => {
-    if (i) {
-      try {
-        const tx = await master.node.create([
-          'stream',
-          stream,
-          { restrict: 'onchain' },
-          { UF: 'RO' },
-        ]);
-        console.log(`Stream ${stream} | ${tx}`);
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
-      try {
-        const tx = await master.node.create([
-          'stream',
-          stream,
-          { restrict: 'offchain' },
-          { funcao: 'Registro de empresas' },
-        ]);
-        console.log(`Stream ${stream} | ${tx}`);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  });
+  await dockers.exec(`docker exec docker-multichain_masternode_1 multichain-cli MyChain grant ${slave.addr} activate,mine 0`);
 
-  transactForever(master, slave);
   registerEnterprises(master, slave);
   printNotes(master, slave);
 })();

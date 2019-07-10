@@ -71,7 +71,6 @@ const empresa = {
   },
   identificacao: () => {
     const cnpj = `${leite.empresa.cnpj()}`;
-    console.log(cnpj);
     constraint(cnpj, sz.id);
     return cnpj;
   },

@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 const fake = require('./fields');
 
 const tomador = () => ({
@@ -49,10 +50,9 @@ class Nota {
           issRetido: String(fake.utils.rad(1, 2)),
           itemLista: fake.utils.item(),
           discriminacao: fake.utils.discriminacao(),
-          codTributMunicipio: this.prefeitura(),
           codServico: String(fake.utils.rad(21, 48)),
           exigibilidadeISS: String(fake.utils.rad(1, 6)),
-          simplesNacional: String(fake.utils.rad(1, 2)),
+          optanteSimplesNacional: String(fake.utils.rad(1, 2)),
           incentivoFiscal: String(fake.utils.rad(1, 2)),
           respRetencao: undefined,
           valPis: maybeF(fake.utils.reais, { p: 0.5, min: 0, max: 6 }),
@@ -93,9 +93,9 @@ class Nota {
 
     if (prest.respRetencao === '2') {
       this.note.json.intermediario = {
-        id: fake.empresa.identificacao(),
-        nomeRazao: fake.empresa.razaoSocial(),
-        cidade: fake.cidade(),
+        identificacaoIntermed: fake.empresa.identificacao(),
+        nomeRazaoIntermed: fake.empresa.razaoSocial(),
+        cidadeIntermed: fake.cidade(),
       };
     }
 
@@ -103,7 +103,8 @@ class Nota {
     prest.valLiquiNfse = this.valLiquiNfse();
 
     this.meta = [
-      prest.codTributMunicipio,
+      'INVOICE_REGISTRY',
+      String(prest.prefeituraIncidencia),
       prest.valServicos,
       prest.baseCalculo,
       prest.itemLista,
@@ -113,7 +114,8 @@ class Nota {
   }
 
   prefeitura() {
-    return String(1100379);
+    const prefeituras = [1100015, 1100379, 1100403, 1100346];
+    return prefeituras[Math.floor(Math.random() * prefeituras.length)];
   }
 
   valIss() {
@@ -143,15 +145,15 @@ class Nota {
     const descontoIncond = prest.descontoIncond !== undefined ? Number(prest.descontoIncond) : 0;
     return `${(
       valServ
-      - valPis
-      - valCofins
-      - valInss
-      - valIr
-      - valCsll
-      - outrasRetencoes
-      - issRetido
-      - descontoCond
-      - descontoIncond
+        - valPis
+        - valCofins
+        - valInss
+        - valIr
+        - valCsll
+        - outrasRetencoes
+        - issRetido
+        - descontoCond
+        - descontoIncond
     ).toFixed(2)}`;
   }
 }
