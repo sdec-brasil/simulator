@@ -40,7 +40,7 @@ class Nota {
       json: {
         emissor: addr,
         prestacao: {
-          competencia: fake.utils.date(),
+          dataIncidencia: fake.utils.date(),
           baseCalculo: fake.utils.reais(),
           aliqServicos: fake.utils.reais(0, 0.3), // % of tax
           valIss: fake.utils.reais(),
