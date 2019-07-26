@@ -164,6 +164,10 @@ class Nota {
   registerTxId(txid) {
     this.txid = txid;
   }
+
+  getTxId() {
+    return this.txid;
+  }
 }
 
 module.exports = Nota;

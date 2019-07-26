@@ -82,7 +82,7 @@ class Enterprise {
   replaceNote(folder, stream, oldNote) {
     const addr = this.json.endBlock;
     const newNote = new Note(this.json.endBlock);
-    newNote.replaceOldNote(oldNote);
+    newNote.replaceOldNote(oldNote.getTxId());
     this.node.publishFrom([addr, stream, newNote.meta, newNote.note])
       .then((txid) => {
         const json = JSON.stringify(newNote);
