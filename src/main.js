@@ -10,25 +10,25 @@ const slavePort = 8002;
 
 const stream = 'events';
 const enterprises = [];
+const replaceableNotes = [];
 
 const folder = `./notes/${Math.floor(new Date() / 1000)}`;
 fs.mkdirSync(folder);
 
-let enterprisesCounter = 0;
-
 // randomInt :: (Int A, Int B) -> (Int C) | A < C < B
 const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-// printNotes :: (Node, Node) ~> printNotes(Node, Node)
-function printNotes(master, slave) {
+// printNotes :: () ~> printNotes()
+function printNotes() {
   const timer = Math.random() * 2500;
   setTimeout(async () => {
     const { length } = enterprises;
     if (length) {
       const eIndex = getRandomInt(0, length - 1);
-      enterprises[eIndex].publishNote(folder, stream);
+      const note = enterprises[eIndex].publishNote(folder, stream);
+      if (note !== null && Math.random() > 0.95) replaceableNotes.push([eIndex, note]);
     }
-    printNotes(master, slave);
+    printNotes();
   }, timer);
 }
 
@@ -43,8 +43,20 @@ function registerEnterprises(master, slave) {
       const enterprise = new Enterprise(slave, stream);
       enterprises.push(enterprise);
     }
-    enterprisesCounter += 1;
     registerEnterprises(master, slave);
+  }, timer);
+}
+
+// replaceNotes :: (Node, Node) ~-> replaceNotes(Node, Nonde)
+function replaceNotes() {
+  const timer = Math.random() * 15000;
+  setTimeout(async () => {
+    const { length } = replaceableNotes;
+    if (length) {
+      const [eIndex, note] = replaceableNotes.pop();
+      enterprises[eIndex].replaceNote(folder, stream, note);
+    }
+    replaceNotes();
   }, timer);
 }
 
@@ -81,5 +93,6 @@ function registerEnterprises(master, slave) {
   await dockers.exec(`docker exec docker-multichain_masternode_1 multichain-cli MyChain grant ${slave.addr} activate,mine 0`);
 
   registerEnterprises(master, slave);
-  printNotes(master, slave);
+  printNotes();
+  replaceNotes();
 })();

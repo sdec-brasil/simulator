@@ -60,12 +60,14 @@ class Enterprise {
 
     if (this.registered) {
       console.log('Registrando Nota');
-      this.node.publishFrom([addr, stream, note.meta, note.note])
+      return this.node.publishFrom([addr, stream, note.meta, note.note])
         .then((txid) => {
+          note.registerTxId(txid);
           const json = JSON.stringify(note);
           fs.writeFile(`${folder}/${txid}.json`, json, 'utf8', () => {
             console.log(`\t Nota registrada | txid: ${txid}`);
           });
+          return note;
         }).catch((err) => {
           console.log('\t Não conseguiu registrar nota');
           console.log(err.code);
@@ -73,6 +75,27 @@ class Enterprise {
           throw new Error('#publishNote Err');
         });
     }
+
+    return null;
+  }
+
+  replaceNote(folder, stream, oldNote) {
+    const addr = this.json.endBlock;
+    const newNote = new Note(this.json.endBlock);
+    newNote.replaceOldNote(oldNote);
+    this.node.publishFrom([addr, stream, newNote.meta, newNote.note])
+      .then((txid) => {
+        const json = JSON.stringify(newNote);
+        fs.writeFile(`${folder}/${txid}.json`, json, 'utf8', () => {
+          console.log(`\t Nota substituta registrada | txid: ${txid}`);
+        });
+        return newNote;
+      }).catch((err) => {
+        console.log('\t Não conseguiu substituir nota');
+        console.log(err.code);
+        console.log(err);
+        throw new Error('#replacehNote Err');
+      });
   }
 }
 

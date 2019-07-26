@@ -156,6 +156,14 @@ class Nota {
         - descontoIncond
     ).toFixed(2)}`;
   }
+
+  replaceOldNote(txid) {
+    this.note.json.prestacao.substitutes = txid;
+  }
+
+  registerTxId(txid) {
+    this.txid = txid;
+  }
 }
 
 module.exports = Nota;
