@@ -25,8 +25,7 @@ function printNotes() {
     const { length } = enterprises;
     if (length) {
       const eIndex = getRandomInt(0, length - 1);
-      const note = enterprises[eIndex].publishNote(folder, stream);
-      if (note !== null && Math.random() > 0.95) replaceableNotes.push([eIndex, note]);
+      enterprises[eIndex].publishNote(folder, stream);
     }
     printNotes();
   }, timer);
@@ -53,8 +52,8 @@ function replaceNotes() {
   setTimeout(async () => {
     const { length } = replaceableNotes;
     if (length) {
-      const [eIndex, note] = replaceableNotes.pop();
-      enterprises[eIndex].replaceNote(folder, stream, note);
+      const [enterprise, note] = replaceableNotes.pop();
+      enterprise.replaceNote(folder, stream, note);
     }
     replaceNotes();
   }, timer);
@@ -96,3 +95,5 @@ function replaceNotes() {
   printNotes();
   replaceNotes();
 })();
+
+module.exports.addNote = note => replaceableNotes.push(note);

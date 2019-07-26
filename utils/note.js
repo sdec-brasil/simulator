@@ -159,6 +159,8 @@ class Nota {
 
   replaceOldNote(txid) {
     this.note.json.prestacao.substitutes = txid;
+    this.meta[0] = 'INVOICE_UPDATE';
+    console.log(this.note.json.prestacao.substitutes);
   }
 
   registerTxId(txid) {

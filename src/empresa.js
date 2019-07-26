@@ -1,6 +1,7 @@
 const fs = require('fs');
 const fake = require('../utils/fields');
 const Note = require('../utils/note');
+const main = require('../src/main');
 
 const maybeF = (f) => {
   if (Math.random() > 0.5) {
@@ -47,7 +48,7 @@ class Enterprise {
           console.log('Error ao registrar empresa:');
           console.error(e);
         }
-      }, 30000);
+      }, 5000);
     } catch (e) {
       console.log('Error ao gerar endereço e permitir empresa:');
       console.error(e);
@@ -62,11 +63,12 @@ class Enterprise {
       console.log('Registrando Nota');
       return this.node.publishFrom([addr, stream, note.meta, note.note])
         .then((txid) => {
-          note.registerTxId(txid);
           const json = JSON.stringify(note);
           fs.writeFile(`${folder}/${txid}.json`, json, 'utf8', () => {
             console.log(`\t Nota registrada | txid: ${txid}`);
           });
+          note.registerTxId(txid);
+          if (Math.random() > 0.85) main.addNote([this, note]);
           return note;
         }).catch((err) => {
           console.log('\t Não conseguiu registrar nota');
@@ -82,7 +84,7 @@ class Enterprise {
   replaceNote(folder, stream, oldNote) {
     const addr = this.json.endBlock;
     const newNote = new Note(this.json.endBlock);
-    newNote.replaceOldNote(oldNote.getTxId());
+    newNote.replaceOldNote(oldNote.txid);
     this.node.publishFrom([addr, stream, newNote.meta, newNote.note])
       .then((txid) => {
         const json = JSON.stringify(newNote);
